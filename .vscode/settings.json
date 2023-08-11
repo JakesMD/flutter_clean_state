@@ -1,0 +1,21 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+    },
+    "files.exclude": {
+        "**/.dart_tool/": true,
+        "**/.idea/": true,
+        "**/.flutter-plugins": true,
+        "**/.flutter-plugins-dependencies": true,
+        "**/.metadata": true,
+        "**/*.iml": true,
+        "**/android": true,
+        "**/doc": true,
+        "**/ios": true,
+        "**/linux": true,
+        "**/macos": true,
+        "**/pubspec.lock": true,
+        "**/test": true,
+        "**/windows": true,
+    }
+}
