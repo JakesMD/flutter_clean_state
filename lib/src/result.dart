@@ -1,107 +1,89 @@
-/// Represents the possible states of a [CResult].
-enum CResultState {
-  /// The result contains an error.
-  error,
-
-  /// The result's data is considered empty.
-  empty,
-
-  /// The result contains valid data.
-  full,
-}
-
-/// Represents the outcome of an operation, including data or an error.
+/// Represents the generic result of an operation that can either succeed
+/// or fail.
+///
+/// [CResult] is a sealed class with two subclasses:
+///
+/// - [CSuccess] is used when the operation succeeds. It contains the
+///   successful result value.
+///
+/// - [CFailure] is used when the operation fails. It contains the failure
+///   exception.
+///
+/// Using [CResult] allows representing both success and failure cases in a
+/// type-safe way.
 ///
 /// ### Example:
-///
 /// ``` dart
 /// // 1. Create an operation that returns a CResult.
-/// CResult<int> divide(int dividend, int divisor) {
-///   // 2. Define a new result.
-///   final result = CResult<int>(isEmpty: (data) => data! == 0);
-///
+/// CResult<int, Exception> divide(int dividend, int divisor) {
 ///   try {
-///     // 3. Add the data to the result.
-///     result.data = dividend ~/ divisor;
-///   } catch (error, stack) {
-///     // 4. Add any errors to the result.
-///     result.error = error;
-///     result.stackTrace = stack;
+///     // 2. Return a success if the operation succeeds.
+///     return CSuccess(dividend ~/ divisor, isEmpty: (value) => value == 0);
+///   } on Exception catch (exception) {
+///     // 3. Return a failure if the operation fails.
+///     return CFailure(exception);
 ///   }
-///
-///   // 5. Return the result.
-///   return result;
 /// }
 ///
-/// // 6. Run the operation.
+/// // 4. Run the operation.
 /// final result = divide(10, 2);
 ///
-/// // 7. Do something according to the result.
-/// switch (result.state) {
-///   case CResultState.error:
-///     print('Error: ${result.error}');
-///     break;
-///   case CResultState.empty:
-///     print('Result: empty');
-///     break;
-///   case CResultState.full:
-///     print('Result: ${result.data}');
-/// }
+/// // 5. Do something according to the result.
+/// final handleResult = switch (result) {
+///   CSuccess(value: final value) => () => print('Result: $value'),
+///   CFailure(exception: final exception) => () => print('Error: $exception'),
+/// };
+/// handleResult();
 /// ```
 ///
 /// ### See also:
-///  * [CResultState], for the possible states of a [CResult].
+///  * [CSuccess], for representing a successful result value.
+///  * [CFailure], for representing a failed result exception.
 ///  * [CController], base class providing lifecycle management for controllers.
 ///  * [CFutureController], for a controller that manages asynchronous tasks.
 ///  * [CObservable], for a class that makes values easy to share and observe.
-///  * [CObserver], for a widget that updates its child whenever the value of a
-///    [CObservable] changes.
-///  * [CProvider], for a central hub for managing global instances with easy
-///    access.
-class CResult<T> {
-  /// Creates a representation of an operation's outcome.
-  CResult({
-    this.data,
-    this.error,
-    this.stackTrace,
+///  * [CObserver], for a widget that updates its child whenever the value of a CObservable changes.
+///  * [CProvider], for a central hub for managing global instances with easy access.
+sealed class CResult<S, E extends Exception> {
+  /// Creates the generic result of an operation that can either succeed or fail.
+  const CResult();
+}
 
-    /// A function to determine if the data is considered empty.
-    bool Function(T? data)? isEmpty,
+/// [CSuccess] represents the success result of an operation.
+///
+/// It contains the [value] returned by the successful result.
+///
+/// An optional [isEmpty] function can be provided to check if the
+/// result [value] should be considered empty.
+final class CSuccess<S, E extends Exception> extends CResult<S, E> {
+  /// Creates a [CSuccess] representing the success result of an operation.
+  ///
+  /// An optional [isEmpty] function can be provided to check if the
+  /// result [value] should be considered empty.
+  const CSuccess(
+    this.value, {
+    bool Function(S value)? isEmpty,
   }) : _isEmpty = isEmpty;
 
-  /// The data contained within the result.
-  T? data;
+  /// The returned value of the successful result.
+  final S value;
 
-  /// The error object associated with the result.
-  Object? error;
+  /// A function to check if the value is considered empty.
+  final bool Function(S value)? _isEmpty;
 
-  /// The stack trace associated with the error, if applicable.
-  StackTrace? stackTrace;
-
-  /// A function to check if the data is considered empty.
-  final bool Function(T? data)? _isEmpty;
-
-  /// Returns `true` if the data is considered empty, `false` otherwise.
+  /// Returns `true` if the value is considered empty, `false` otherwise.
   ///
   /// Defaults to `false` if `isEmpty` wasn't provided during creation.
-  bool get isEmpty => _isEmpty?.call(data) ?? false;
+  bool get isEmpty => _isEmpty?.call(value) ?? false;
+}
 
-  /// Returns `true` if the result contains valid data, `false` otherwise.
-  bool get hasData => !hasError && !isEmpty;
+/// [CFailure] represents the failure result of an operation.
+///
+/// It contains the [exception] thrown during the failure.
+final class CFailure<S, E extends Exception> extends CResult<S, E> {
+  /// Creates a [CFailure] representing the failure result of an operation.
+  const CFailure(this.exception);
 
-  /// Returns `true` if the result contains an error, `false` otherwise.
-  bool get hasError => error != null || stackTrace != null;
-
-  /// Provides a more readable state of the [CResult].
-  ///
-  /// This method consolidates logic, simplifying understanding, especially
-  /// in switch statements. It returns a [CResultState] based on the outcome:
-  ///  - [CResultState.error] if an error exists.
-  ///  - [CResultState.empty] if data is considered empty.
-  ///  - [CResultState.full] if valid data exists.
-  CResultState get state {
-    if (hasError) return CResultState.error;
-    if (isEmpty) return CResultState.empty;
-    return CResultState.full;
-  }
+  /// The exception thrown during the failure.
+  final E exception;
 }

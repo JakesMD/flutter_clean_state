@@ -15,7 +15,6 @@
         "**/linux": true,
         "**/macos": true,
         "**/pubspec.lock": true,
-        "**/test": true,
         "**/windows": true,
     }
 }

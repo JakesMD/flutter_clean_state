@@ -1,6 +1,6 @@
 name: clean_state
-description: Simple but versatile state management for clean code.
-version: 1.0.0
+description: Simple but versatile state management to keep your code clean and adaptable.
+version: 2.0.0
 repository: https://github.com/JakesMD/flutter_clean_state
 
 environment:

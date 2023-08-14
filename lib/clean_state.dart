@@ -1,4 +1,4 @@
-/// The main library of the clean_slate package.
+/// The main library of the clean_state package.
 ///
 /// Check out the [README](../index.html) for more info.
 library clean_state;

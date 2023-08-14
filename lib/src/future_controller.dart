@@ -9,7 +9,7 @@ enum CFutureState {
   inProgress,
 
   /// The operation encountered an error.
-  error,
+  fail,
 
   /// The operation completed successfully.
   success,
@@ -25,9 +25,9 @@ enum CFutureState {
 ///
 /// ``` dart
 /// // 1. Make your asynchronous tasks return a CResult.
-/// Future<CResult<String>> fetchData() async {
+/// Future<CResult<String, Exception>> fetchData() async {
 ///   await Future.delayed(const Duration(seconds: 3));
-///   return CResult(data: 'Hello World');
+///   return const CSuccess('Hello World');
 /// }
 ///
 /// class MyWidget extends StatelessWidget {
@@ -47,10 +47,9 @@ enum CFutureState {
 ///         // 4. Observe the controller for state changes.
 ///         observable: controller.notifier,
 ///         builder: (context, _) {
-///
 ///           // 5. Update your UI according to the current state.
 ///           switch (controller.state) {
-///             case CFutureState.error:
+///             case CFutureState.fail:
 ///               return const Text('Error');
 ///             case CFutureState.inProgress:
 ///               return const Text('Loading');
@@ -94,7 +93,9 @@ class CFutureController extends CController {
   CFutureState get state => _state;
 
   /// Executes an asynchronous operation and manages its state.
-  Future<CResult<T>> run<T>(Future<CResult<T>> Function() task) async {
+  Future<CResult<S, E>> run<S, E extends Exception>(
+    Future<CResult<S, E>> Function() task,
+  ) async {
     if (state == CFutureState.inProgress) {
       log(
         "WARNING: A task is already running so states may become muddled up. Concider using two separate controllers for simultaneous tasks.",
@@ -105,7 +106,12 @@ class CFutureController extends CController {
 
     final result = await task();
 
-    _updateState(result.hasError ? CFutureState.error : CFutureState.success);
+    final newState = switch (result) {
+      CSuccess() => CFutureState.success,
+      CFailure() => CFutureState.fail,
+    };
+    _updateState(newState);
+
     return result;
   }
 }

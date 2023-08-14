@@ -27,8 +27,12 @@ import 'package:clean_state/clean_state.dart';
 
 3. **Enjoy**: Explore our versatile state management tools and transform your codebase into a cleaner, more organized masterpiece.
 
+## 💥 Breaking Changes
+### 2.0.0
+  * Completely new implementation of CResult (thanks to [Andrea Birzzoto's article](https://codewithandrea.com/articles/flutter-exception-handling-try-catch-result-type/#the-result-type-benefits)) that can be a success or a failure object.
 
-### 👋 Additional Information
+
+## 👋 Additional Information
 Did you know? This package started as a private project and is now open for wider testing! Your input matters, so don't hesitate to share your thoughts or report any issues on GitHub.
 
 Ready to supercharge your state management? Dive into our documentation below powered by ChatGPT 😉
@@ -180,46 +184,34 @@ CResult simplifies the way you handle operation outcomes. Say goodbye to tangled
 
 ``` dart
 // 1. Create an operation that returns a CResult.
-CResult<int> divide(int dividend, int divisor) {
-  // 2. Define a new result.
-  final result = CResult<int>(isEmpty: (data) => data! == 0);
-
+CResult<int, Exception> divide(int dividend, int divisor) {
   try {
-    // 3. Add the data to the result.
-    result.data = dividend ~/ divisor;
-  } catch (error, stack) {
-    // 4. Add any errors to the result.
-    result.error = error;
-    result.stackTrace = stack;
+    // 2. Return a success if the operation succeeds.
+    return CSuccess(dividend ~/ divisor, isEmpty: (value) => value == 0);
+  } on Exception catch (exception) {
+    // 3. Return a failure if the operation fails.
+    return CFailure(exception);
   }
-
-  // 5. Return the result.
-  return result;
 }
 
-// 6. Run the operation.
+// 4. Run the operation.
 final result = divide(10, 2);
 
-// 7. Do something according to the result.
-switch (result.state) {
-  case CResultState.error:
-    print('Error: ${result.error}');
-    break;
-  case CResultState.empty:
-    print('Result: empty');
-    break;
-  case CResultState.full:
-    print('Result: ${result.data}');
-}
+// 5. Do something according to the result.
+final handleResult = switch (result) {
+  CSuccess(value: final value) => () => print('Result: $value'),
+  CFailure(exception: final exception) => () => print('Error: $exception'),
+};
+handleResult();
 ```
 
 ### CFutureController: Your Asynchronous Task Companion
 CFutureController comes to your rescue, making handling asynchronous tasks a breeze. Say goodbye to the mess of `isBusy = true` and `isBusy = false` all over your codebase. This hero manages progress and completion states for you, resulting in code that's cleaner and more organized.
 ``` dart
 // 1. Make your asynchronous tasks return a CResult.
-Future<CResult<String>> fetchData() async {
+Future<CResult<String, Exception>> fetchData() async {
   await Future.delayed(const Duration(seconds: 3));
-  return CResult(data: 'Hello World');
+  return const CSuccess('Hello World');
 }
 
 class MyWidget extends StatelessWidget {
@@ -239,10 +231,9 @@ class MyWidget extends StatelessWidget {
         // 4. Observe the controller for state changes.
         observable: controller.notifier,
         builder: (context, _) {
-          
           // 5. Update your UI according to the current state.
           switch (controller.state) {
-            case CFutureState.error:
+            case CFutureState.fail:
               return const Text('Error');
             case CFutureState.inProgress:
               return const Text('Loading');
