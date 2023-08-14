@@ -29,7 +29,7 @@ import 'package:clean_state/clean_state.dart';
 
 ## 💥 Breaking Changes
 ### 2.0.0
-  * Completely new implementation of CResult (thanks to [Andrea Birzzoto's article](https://codewithandrea.com/articles/flutter-exception-handling-try-catch-result-type/#the-result-type-benefits)) that can be a success or a failure object.
+  * Completely new implementation of CResult (thanks to [Andrea Birzzoto's article](https://codewithandrea.com/articles/flutter-exception-handling-try-catch-result-type)) that can be a success or a failure object.
 
 
 ## 👋 Additional Information
