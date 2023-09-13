@@ -1,10 +1,10 @@
 name: clean_state
 description: Simple but versatile state management to keep your code clean and adaptable.
-version: 2.0.0
+version: 2.1.0
 repository: https://github.com/JakesMD/flutter_clean_state
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
+  sdk: ">=3.0.5 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
