@@ -11,54 +11,30 @@ import "package:get_it/get_it.dart";
 ///
 /// ### Example:
 ///
-/// ``` dart
-/// // AS A SERVICE:
+/// ```dart
+/// CProvider.register(MyHomePageController());   // Store the controller for later.
+/// CProvider.fetch<MyHomePageController>();      // Fetch the controller from anywhere.
+/// CProvider.unregister<MyHomePageController>(); // Remove the controller once it's no longer needed.
 ///
-/// // Store the controller in a save place for later.
-/// CProvider.register(MyHomePageController());
-///
-/// // Somewhere else in the app later on...
-/// CProvider.fetch<MyHomePageController>();
-///
-/// // Once it's no longer needed...
-/// CProvider.unregister<MyHomePageController>();
-///
-/// // AS A WIDGET:
-///
-/// class MyHomePage extends StatelessWidget {
-///   const MyHomePage({super.key});
-///
-///   @override
-///   Widget build(BuildContext context) {
-///     // 1. Pop your widget into a CProvider and give it an instance to register.
-///     return CProvider(
-///       instance: MyHomePageController(),
-///       builder: (context, controller) => Scaffold(
-///         body: Center(
-///           child: CObserver(
-///             observable: controller.counter,
-///             builder: (context, counter) => Text('$counter'),
-///           ),
-///         ),
-///         floatingActionButton: FloatingActionButton(
-///           onPressed: controller.incrementCounter,
-///           child: const Icon(Icons.add),
-///         ),
+/// return CProvider(
+///   instance: MyHomePageController(),
+///   builder: (context, controller) => Scaffold(
+///     body: Center(
+///       child: CObserver(
+///         observable: controller.counter,
+///         builder: (context, counter) => Text('$counter'),
 ///       ),
-///     );
-///     // 2. When this CProvider widget is disposed the instance will
-///     //    automatically be unregistered.
-///   }
-/// }
+///     ),
+///     floatingActionButton: FloatingActionButton(
+///       onPressed: controller.incrementCounter,
+///       child: const Icon(Icons.add),
+///     ),
+///   ),
+/// );
 /// ```
 ///
 /// ### See also:
 ///  * [CController], base class providing lifecycle management for controllers.
-///  * [CFutureController], for a controller that manages asynchronous tasks.
-///  * [CObservable], for a class that makes values easy to share and observe.
-///  * [CObserver], for a widget that updates its child whenever the value of a
-///    [CObservable] changes.
-///  * [CResult], for a representation of an operation's outcome.
 class CProvider<T extends Object> extends StatefulWidget {
   /// The instance to store and utilize.
   final T instance;

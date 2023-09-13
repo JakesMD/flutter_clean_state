@@ -23,32 +23,26 @@ enum CFutureState {
 ///
 /// ### Example:
 ///
-/// ``` dart
-/// // 1. Make your asynchronous tasks return a CResult.
-/// Future<CResult<String, Exception>> fetchData() async {
+/// ```dart
+/// Future<CResult<String, Exception>> fetchData() async { // 1. Make your asynchronous tasks return a CResult.
 ///   await Future.delayed(const Duration(seconds: 3));
 ///   return const CSuccess('Hello World');
 /// }
 ///
 /// class MyWidget extends StatelessWidget {
-///   MyWidget({super.key});
-///
-///   // 2. Initialize a controller.
-///   final controller = CFutureController(onStateChange: (state) => print(state));
-///
-///   // 3. Run a task in the controller.
-///   void load() async => await controller.run(fetchData);
+///   final controller = CFutureController(                 // 2. Initialize a controller.
+///     onStateChange: (state) => print(state),
+///   );
+///   void load() async => await controller.run(fetchData); // 3. Run a task in the controller.
 ///
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     return GestureDetector(
 ///       onTap: load,
-///       child: CObserver(
-///         // 4. Observe the controller for state changes.
+///       child: CObserver( // 4. Observe the controller for state changes.
 ///         observable: controller.notifier,
 ///         builder: (context, _) {
-///           // 5. Update your UI according to the current state.
-///           switch (controller.state) {
+///           switch (controller.state) {  // 5. Update your UI according to the current state.
 ///             case CFutureState.fail:
 ///               return const Text('Error');
 ///             case CFutureState.inProgress:
@@ -67,10 +61,6 @@ enum CFutureState {
 ///  * [CFutureState], for the different states of an asynchronous operation.
 ///  * [CController], base class providing lifecycle management for controllers.
 ///  * [CObservable], for a class that makes values easy to share and observe.
-///  * [CObserver], for a widget that updates its child whenever the value of a
-///    [CObservable] changes.
-///  * [CProvider], for a central hub for managing global instances with easy
-///    access.
 ///  * [CResult], for a representation of an operation's outcome.
 class CFutureController extends CController {
   /// Creates a controller to manage asynchronous tasks and their states.
@@ -93,8 +83,8 @@ class CFutureController extends CController {
   CFutureState get state => _state;
 
   /// Executes an asynchronous operation and manages its state.
-  Future<CResult<S, E>> run<S, E extends Exception>(
-    Future<CResult<S, E>> Function() task,
+  Future<CResult<S, F>> run<S, F>(
+    Future<CResult<S, F>> Function() task,
   ) async {
     if (state == CFutureState.inProgress) {
       log(

@@ -6,26 +6,23 @@ import "package:rxdart/rxdart.dart";
 ///
 /// ### Example:
 ///
-/// ``` dart
-/// // Create an observable counter.
-/// final counter = 5.cObserve;
-///
-/// // Subscribe to value changes.
-/// final subscription = counter.stream.listen((value) => print(value));
-///
-/// // Update the counter's value.
-/// counter.value = 10;
+/// ```dart
+/// final counter = 5.cObserve;                 // Create an observable counter.
+/// final subscription = counter.stream.listen( // Subscribe to value changes.
+///   (value) => print(value),
+/// );
+/// counter.value = 10;                         // Update the counter's value from anywhere.
+/// final result = counter.value;               // Fetch the counter's value from anywhere.
 /// ```
 ///
 /// ### See also:
-///  * [CObservableExtension], for converting any object into a streamable value.
 ///  * [CController], base class providing lifecycle management for controllers.
-///  * [CFutureController], for a controller that manages asynchronous tasks.
 ///  * [CObserver], for a widget that updates its child whenever the value of a
 ///    [CObservable] changes.
-///  * [CProvider], for a central hub for managing global instances with easy
-///    access.
-///  * [CResult], for a representation of an operation's outcome.
+///  * [CStreamObservable], for a class that makes stream events easy to share
+///    and observe.
+///  * [CStreamObserver], for a widget that updates its child whenever the value
+///    of a [CStreamObservable] changes.
 class CObservable<T> {
   /// A special StreamController that remembers the latest value.
   final BehaviorSubject<T> _subject;
@@ -48,11 +45,6 @@ class CObservable<T> {
   /// Use this to change the observable's value. All registered listeners will
   /// be notified with the new value.
   set value(T newValue) => _subject.add(newValue);
-
-  /// Another way to update the value and inform listeners.
-  ///
-  /// This method is the same as `value = newValue`, offering flexibility.
-  set(T newValue) => _subject.add(newValue);
 
   /// Notify listeners even if the value hasn't changed.
   ///

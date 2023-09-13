@@ -26,9 +26,7 @@ class MyHomePage extends StatelessWidget {
 
   MyHomePage({super.key, required this.title});
 
-  // This is the value to be observed.
   final _counter = 0.cObserve;
-
   void _incrementCounter() => _counter.value++;
 
   @override
@@ -43,9 +41,6 @@ class MyHomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
-
-            // Wrap the widget you want to update in an CObserver and provide
-            // the value to observe.
             CObserver(
               observable: _counter,
               builder: (context, counter) => Text(

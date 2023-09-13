@@ -9,3 +9,5 @@ export 'src/observable.dart';
 export 'src/observer.dart';
 export 'src/provider.dart';
 export 'src/result.dart';
+export 'src/stream_observable.dart';
+export 'src/stream_observer.dart';
